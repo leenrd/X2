@@ -6,16 +6,22 @@ import { UserRoundPlus } from "lucide-react";
 import { addFriendSchema } from "@/lib/validations/add-friend";
 import axios, { AxiosError } from "axios";
 import toast from "react-hot-toast";
-import { z } from "zod";
+import { set, z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 
-interface AddFriendBtnProps {}
+interface AddFriendFormProps {}
 
 type FormData = z.infer<typeof addFriendSchema>;
 
-const AddFriendBtn: FC<AddFriendBtnProps> = ({}) => {
+const AddFriendForm: FC<AddFriendFormProps> = ({}) => {
   const [showSuccessState, setShowSuccessState] = useState<boolean>(false);
+
+  if (showSuccessState) {
+    setTimeout(() => {
+      setShowSuccessState(false);
+    }, 3000);
+  }
 
   const {
     register,
@@ -34,19 +40,18 @@ const AddFriendBtn: FC<AddFriendBtnProps> = ({}) => {
       toast.success("Friend request sent!");
     } catch (error) {
       if (error instanceof z.ZodError) {
-        toast.error("Invalid input. Please try again.");
         setError("email", { message: error.message });
         return;
       }
 
       if (error instanceof AxiosError) {
-        if (error.response?.status === 400) {
-          toast.error("User not found.");
+        if (error.response?.data === "User not found") {
+          toast.error("Please try again");
           setError("email", { message: error.response?.data });
           return;
         } else {
           console.log(error.message);
-          toast.error("An error occurred. Please try again.");
+          toast.error(error.response?.data);
         }
       }
     }
@@ -62,13 +67,14 @@ const AddFriendBtn: FC<AddFriendBtnProps> = ({}) => {
         htmlFor="email"
         className="block text-sm font-medium leading-6 text-gray-900"
       >
-        Enter your friend&apos;s email
+        Enter your friend&apos;s email <span className="text-red-500">*</span>
       </label>
 
       <div className="mt-2 flex gap-4">
         <input
           {...register("email")}
           type="text"
+          disabled={isSubmitting}
           className={`block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400  focus:ring-slate-700 sm:text-sm sm:leading-6 pl-4 ${
             errors.email
               ? "ring-red-500 border-red-600 focus:ring-red-700"
@@ -93,4 +99,4 @@ const AddFriendBtn: FC<AddFriendBtnProps> = ({}) => {
   );
 };
 
-export default AddFriendBtn;
+export default AddFriendForm;
