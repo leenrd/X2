@@ -15,11 +15,7 @@ const Page: FC<PageProps> = ({}) => {
     try {
       await signIn("google");
     } catch (error) {
-      toast.error("Failed to sign in with Google", {
-        style: {
-          borderRadius: "10px",
-        },
-      });
+      toast.error("Failed to sign in with Google");
     } finally {
       setIsLoading(false);
     }
