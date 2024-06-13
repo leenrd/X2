@@ -7,8 +7,11 @@ const googleCredentials = () => {
   const clientId = process.env.GOOGLE_CLIENT_ID;
   const clientSecret = process.env.GOOGLE_CLIENT_SECRET;
 
-  if (!clientId || !clientSecret) {
-    throw new Error("Google credentials are missing");
+  if (!clientId) {
+    throw new Error("Google id is missing");
+  }
+  if (!clientSecret) {
+    throw new Error("Google secret is missing");
   }
 
   return { clientId, clientSecret };
