@@ -1,5 +1,7 @@
 import { Icon, Icons } from "@/components/icons";
+import FriendRequest from "@/components/ui/friendRequest";
 import SignOutButton from "@/components/ui/signOutButton";
+import { fetchRedis } from "@/helpers/redis";
 import { authOptions } from "@/lib/auth";
 import { getServerSession } from "next-auth";
 import Image from "next/image";
@@ -30,6 +32,14 @@ const sideBarItems: sideBarProps[] = [
 const Layout: FC<LayoutProps> = async ({ children }) => {
   const session = await getServerSession(authOptions);
   if (!session) notFound();
+
+  const unseenRequestCount = (
+    (await fetchRedis(
+      "smembers",
+      `user:${session.user.id}:incoming_friend_request`
+    )) as User[]
+  ).length;
+
   return (
     <div className="w-full flex h-screen">
       <aside className="hidden md:flex h-full w-full max-w-xs grow flex-col gap-y-5 overflow-y-auto border-r border-gray-200 bg-gray-100 px-6">
@@ -48,7 +58,7 @@ const Layout: FC<LayoutProps> = async ({ children }) => {
                 Overview
               </h1>
 
-              <ul role="list" className="-mx-2 mt-2 space-y-1">
+              <ul role="list" className="-mx-2 mt-4 space-y-1">
                 {sideBarItems.map((item) => {
                   const Icon = Icons[item.Icon];
                   return (
@@ -63,10 +73,16 @@ const Layout: FC<LayoutProps> = async ({ children }) => {
                     </li>
                   );
                 })}
+                <li>
+                  <FriendRequest
+                    sessionId={session.user.id}
+                    initialUnseenRequestCount={unseenRequestCount}
+                  />
+                </li>
               </ul>
             </li>
 
-            <li className="-mx-6 mt-auto mb-4 flex items-center">
+            <li className="-mx-6 mt-auto mb-4 flex items-center ">
               <div className="flex flex-1 items-center gap-x-4 px-6 py-3 text-sm font-semibold leading-6 text-gray-900">
                 <div className="relative h-8 w-8 bg-gray-50">
                   <Image
