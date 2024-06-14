@@ -1,8 +1,9 @@
 "use client";
 
+import { fetchRedis } from "@/helpers/redis";
 import { Users } from "lucide-react";
 import Link from "next/link";
-import { FC, useState } from "react";
+import { FC, useCallback, useEffect, useState } from "react";
 
 interface FriendRequestProps {
   sessionId: string;
@@ -16,6 +17,7 @@ const FriendRequest: FC<FriendRequestProps> = ({
   const [unseenRequestCount, setUnseenRequestCount] = useState<number>(
     initialUnseenRequestCount
   );
+
   return (
     <Link
       href="/feed/requests"

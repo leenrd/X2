@@ -1,8 +1,12 @@
 "use client";
 
-import { Check, X } from "lucide-react";
+import axios, { AxiosError } from "axios";
+import { log } from "console";
+import { X } from "lucide-react";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 import { FC, useState } from "react";
+import toast from "react-hot-toast";
 
 interface FriendRequestListProps {
   sessionId: string;
@@ -13,8 +17,52 @@ const FriendRequestList: FC<FriendRequestListProps> = ({
   sessionId,
   requests,
 }) => {
+  const router = useRouter();
   const [incomingFriendRequests, setIncomingFriendRequests] =
     useState<incomingFriendRequest[]>(requests);
+
+  const acceptFriend = async (senderId: string) => {
+    try {
+      await axios.post("/api/friends/accept", { id: senderId });
+
+      setIncomingFriendRequests((prev) => {
+        const updatedRequests = prev.filter(
+          (request) => request.senderId !== senderId
+        );
+        console.log("Updated Requests:", updatedRequests);
+        return updatedRequests;
+      });
+      toast.success("Friend request accepted!", {
+        icon: "🎉",
+      });
+      router.refresh();
+    } catch (error: any) {
+      console.log(error.response);
+      if (error instanceof AxiosError) {
+        return new Response("Invalid request payload", { status: 422 });
+      }
+    }
+  };
+
+  const denyFriend = async (senderId: string) => {
+    try {
+      await axios.post("/api/friends/deny", { id: senderId });
+
+      setIncomingFriendRequests((prev) =>
+        prev.filter((request) => request.senderId !== senderId)
+      );
+      toast.success("Friend successfully denied!", {
+        icon: "😔",
+      });
+      router.refresh();
+    } catch (error: any) {
+      console.log(error.response);
+      if (error instanceof AxiosError) {
+        return new Response("Invalid request payload", { status: 422 });
+      }
+    }
+  };
+
   return (
     <>
       {" "}
@@ -45,16 +93,15 @@ const FriendRequestList: FC<FriendRequestListProps> = ({
             </section>
             <div className="flex gap-2.5">
               <button
-                //   onClick={() => acceptFriend(request.senderId)}
+                onClick={() => acceptFriend(request.senderId)}
                 aria-label="accept friend"
                 className="text-white px-3 bg-blue-600 hover:bg-blue-700 grid place-items-center rounded-sm transition hover:shadow-md"
               >
-                {/* <Check className="font-semibold text-white w-3/4 h-3/4" /> */}
                 Accept
               </button>
 
               <button
-                //   onClick={() => denyFriend(request.senderId)}
+                onClick={() => denyFriend(request.senderId)}
                 aria-label="deny friend"
                 className="w-8 h-8 bg-red-600 hover:bg-red-700 grid place-items-center rounded-sm transition hover:shadow-md"
               >

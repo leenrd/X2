@@ -11,13 +11,13 @@ const Page: FC = async ({}) => {
 
   const requestSenderIDs = (await fetchRedis(
     "smembers",
-    `user:${session.user.id}:incoming_friend_request`
+    `user:${session.user.id}:incoming_friend_requests`
   )) as string[];
 
   const incomingRequestsCredentials = await Promise.all(
     requestSenderIDs.map(async (senderId) => {
       const sender = (await fetchRedis("get", `user:${senderId}`)) as string;
-      const senderParsed = JSON.parse(sender);
+      const senderParsed = JSON.parse(sender) as User;
       return {
         senderId,
         senderName: senderParsed.name,
