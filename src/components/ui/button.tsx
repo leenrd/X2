@@ -11,6 +11,8 @@ const buttonVariants = cva(
         default: "bg-slate-900 text-white hover:bg-slate-800",
         destructive: "bg-red-500 text-white hover:bg-red-500/90",
         ghost: "bg-transparent hover:text-slate-900 hover:bg-slate-200",
+        ringHover:
+          "bg-slate-900 text-white transition-all duration-300 hover:bg-black/90 hover:ring-2 hover:ring-black/90 hover:ring-offset-2",
       },
       size: {
         sm: "px-2.5 py-1.5",
@@ -35,7 +37,7 @@ const Button: FC<ButtonProps> = ({
   className,
   children,
   variant,
-  isLoading = false,
+  isLoading,
   size,
   ...props
 }) => {

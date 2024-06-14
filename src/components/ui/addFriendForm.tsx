@@ -16,18 +16,24 @@ type FormData = z.infer<typeof addFriendSchema>;
 
 const AddFriendForm: FC<AddFriendFormProps> = ({}) => {
   const [showSuccessState, setShowSuccessState] = useState<boolean>(false);
+  const [fakeLoad, setFakeLoad] = useState<boolean>(false);
 
   if (showSuccessState) {
     setTimeout(() => {
       setShowSuccessState(false);
     }, 3000);
   }
+  if (fakeLoad) {
+    setTimeout(() => {
+      setFakeLoad(false);
+    }, 2500);
+  }
 
   const {
     register,
     handleSubmit,
     setError,
-    formState: { errors, isSubmitting },
+    formState: { errors },
   } = useForm<FormData>({
     resolver: zodResolver(addFriendSchema),
   });
@@ -59,6 +65,7 @@ const AddFriendForm: FC<AddFriendFormProps> = ({}) => {
 
   const onSubmit = (data: FormData) => {
     addFriend(data.email);
+    setFakeLoad(true);
   };
 
   return (
@@ -74,7 +81,7 @@ const AddFriendForm: FC<AddFriendFormProps> = ({}) => {
         <input
           {...register("email")}
           type="text"
-          disabled={isSubmitting}
+          disabled={fakeLoad}
           className={`block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400  focus:ring-slate-700 sm:text-sm sm:leading-6 pl-4 ${
             errors.email
               ? "ring-red-500 border-red-600 focus:ring-red-700"
@@ -84,7 +91,8 @@ const AddFriendForm: FC<AddFriendFormProps> = ({}) => {
         />
         <Button
           className="flex items-center gap-1 justify-center"
-          isLoading={isSubmitting}
+          isLoading={fakeLoad}
+          variant="ringHover"
           type="submit"
         >
           <UserRoundPlus size={15} />

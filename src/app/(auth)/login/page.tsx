@@ -60,8 +60,11 @@ const Page: FC<PageProps> = ({}) => {
               Sign in with Google
             </Button>
             <div className="mt-6 text-center ">
-              <a href="#" className="text-sm text-gray-500 hover:underline ">
-                Don’t have an account yet? Sign up
+              <a
+                href="https://github.com/leenrd"
+                className="text-sm text-gray-500 hover:underline "
+              >
+                See my other projects at Github! 😁
               </a>
             </div>
           </div>
