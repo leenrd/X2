@@ -1,16 +1,18 @@
 "use client";
 
+import { pusherClient } from "@/lib/pusher";
+import { toPusherKey } from "@/lib/utils";
 import axios, { AxiosError } from "axios";
 import { log } from "console";
 import { X } from "lucide-react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import { FC, useState } from "react";
+import { FC, useEffect, useState } from "react";
 import toast from "react-hot-toast";
 
 interface FriendRequestListProps {
   sessionId: string;
-  requests: incomingFriendRequest[];
+  requests: IncomingFriendRequest[];
 }
 
 const FriendRequestList: FC<FriendRequestListProps> = ({
@@ -19,7 +21,36 @@ const FriendRequestList: FC<FriendRequestListProps> = ({
 }) => {
   const router = useRouter();
   const [incomingFriendRequests, setIncomingFriendRequests] =
-    useState<incomingFriendRequest[]>(requests);
+    useState<IncomingFriendRequest[]>(requests);
+
+  useEffect(() => {
+    pusherClient.subscribe(
+      toPusherKey(`user:${sessionId}:incoming_friend_requests`)
+    );
+    console.log("listening to ", `user:${sessionId}:incoming_friend_requests`);
+
+    const friendRequestHandler = ({
+      senderId,
+      senderEmail,
+      senderName,
+      senderImage,
+    }: IncomingFriendRequest) => {
+      console.log("function got called");
+      setIncomingFriendRequests((prev) => [
+        ...prev,
+        { senderId, senderEmail, senderName, senderImage },
+      ]);
+    };
+
+    pusherClient.bind("incoming_friend_requests", friendRequestHandler);
+
+    return () => {
+      pusherClient.unsubscribe(
+        toPusherKey(`user:${sessionId}:incoming_friend_requests`)
+      );
+      pusherClient.unbind("incoming_friend_requests", friendRequestHandler);
+    };
+  }, [sessionId]);
 
   const acceptFriend = async (senderId: string) => {
     try {

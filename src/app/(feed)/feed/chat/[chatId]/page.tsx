@@ -25,9 +25,9 @@ async function getChatMessages(chatId: string) {
 
     const dbMessages = results.map((message) => JSON.parse(message) as Message);
 
-    // const reversedDbMessages = dbMessages.reverse().reverse();
+    const reversedDbMessages = dbMessages.reverse().reverse();
 
-    const messages = messageArrayValidator.parse(dbMessages);
+    const messages = messageArrayValidator.parse(reversedDbMessages);
 
     return messages;
   } catch (error) {
