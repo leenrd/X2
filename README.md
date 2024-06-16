@@ -8,3 +8,4 @@ feat:
 - rooms?
 - dark/light mode
 - ai translate?
+- gemini integration for quick replies
