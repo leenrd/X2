@@ -57,6 +57,11 @@ const SidebarChatList: FC<SidebarChatListProps> = ({ friends, sessionId }) => {
                   </span>
                   <span className="text-xs text-gray-500">{friend.email}</span>
                 </div>
+                {unseenMsgCount > 0 ? (
+                  <span className="rounded-full w-6 h-6 text-xs flex justify-center text-center items-center text-white bg-red-600">
+                    {unseenMsgCount < 99 ? unseenMsgCount : "99+"}
+                  </span>
+                ) : null}
               </a>
             </li>
           );
