@@ -1,9 +1,9 @@
 import { z } from "zod";
 
-const messageValidator = z.object({
+export const messageValidator = z.object({
   id: z.string(),
   senderId: z.string(),
-  message: z.string(),
+  message: z.string().max(1000),
   timestamp: z.number(),
 });
 

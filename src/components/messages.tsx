@@ -36,13 +36,14 @@ const Messages: FC<MessagesProps> = ({
           const currentUser = message.senderId === sessionId;
           const hasNextMessageFromSameUser =
             messages[index - 1]?.senderId === messages[index].senderId;
+
           return (
             <div
               key={`${message.id}-${message.timestamp}`}
               className="chat-message"
             >
               <div
-                className={cn("flex items-end", {
+                className={cn("flex items-end mb-1", {
                   "justify-end": currentUser,
                 })}
               >
@@ -57,16 +58,25 @@ const Messages: FC<MessagesProps> = ({
                 >
                   <span
                     className={cn("px-4 py-2 rounded-lg inline-block", {
-                      "bg-sky-500-600 text-white": currentUser,
+                      "bg-sky-600 text-white": currentUser,
                       "bg-gray-200 text-gray-900": !currentUser,
                       "rounded-br-none":
                         !hasNextMessageFromSameUser && currentUser,
+                      "rounded-tr-none":
+                        hasNextMessageFromSameUser && currentUser,
                       "rounded-bl-none":
                         !hasNextMessageFromSameUser && !currentUser,
+                      "rounded-tl-none":
+                        hasNextMessageFromSameUser && !currentUser,
                     })}
                   >
                     {message.message}{" "}
-                    <span className="ml-2 text-xs text-gray-400">
+                    <span
+                      className={cn("ml-2 text-xs", {
+                        "text-gray-100": currentUser,
+                        "text-gray-600": !currentUser,
+                      })}
+                    >
                       {formatTimestamp(message.timestamp)}
                     </span>
                   </span>
