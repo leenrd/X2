@@ -1,5 +1,6 @@
 import { Icon, Icons } from "@/components/icons";
 import FriendRequest from "@/components/ui/friendRequest";
+import SidebarChatList from "@/components/ui/sidebarChatList";
 import SignOutButton from "@/components/ui/signOutButton";
 import { getFriendsById } from "@/helpers/get-friends-by-id";
 import { fetchRedis } from "@/helpers/redis";
@@ -34,15 +35,14 @@ const Layout: FC<LayoutProps> = async ({ children }) => {
   const session = await getServerSession(authOptions);
   if (!session) notFound();
 
+  const friends = await getFriendsById(session.user.id);
+
   const unseenRequestCount = (
     (await fetchRedis(
       "smembers",
       `user:${session.user.id}:incoming_friend_request`
     )) as User[]
   ).length;
-
-  const friends = await getFriendsById(session.user.id);
-  console.log(friends);
 
   return (
     <div className="w-full flex h-screen">
@@ -55,10 +55,16 @@ const Layout: FC<LayoutProps> = async ({ children }) => {
           <h1 className="leading-4 text-lg font-bold tracking-tighter">
             Your Chats
           </h1>
-        ) : null}
+        ) : (
+          <h1 className="leading-4 text-lg font-bold tracking-tighter">
+            No Friends Yet
+          </h1>
+        )}
         <nav className="flex flex-1 flex-col">
           <ul role="list" className="flex flex-1 flex-col gap-y-7">
-            <li>User chats</li>
+            <li>
+              <SidebarChatList friends={friends} sessionId={session.user.id} />
+            </li>
             <li>
               <h1 className="leading-4 text-lg font-bold tracking-tighter">
                 Overview
