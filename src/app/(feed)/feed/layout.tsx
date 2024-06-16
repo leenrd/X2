@@ -1,6 +1,7 @@
 import { Icon, Icons } from "@/components/icons";
 import FriendRequest from "@/components/ui/friendRequest";
 import SignOutButton from "@/components/ui/signOutButton";
+import { getFriendsById } from "@/helpers/get-friends-by-id";
 import { fetchRedis } from "@/helpers/redis";
 import { authOptions } from "@/lib/auth";
 import { getServerSession } from "next-auth";
@@ -40,6 +41,9 @@ const Layout: FC<LayoutProps> = async ({ children }) => {
     )) as User[]
   ).length;
 
+  const friends = await getFriendsById(session.user.id);
+  console.log(friends);
+
   return (
     <div className="w-full flex h-screen">
       <aside className="hidden md:flex h-full w-full max-w-xs grow flex-col gap-y-5 overflow-y-auto border-r border-gray-200 bg-gray-100 px-6">
@@ -47,12 +51,14 @@ const Layout: FC<LayoutProps> = async ({ children }) => {
           <Icons.Shell className="h-8 w-auto text-black" />
         </Link>
 
-        <h1 className="leading-4 text-lg font-bold tracking-tighter">
-          Your Chats
-        </h1>
+        {friends.length > 0 ? (
+          <h1 className="leading-4 text-lg font-bold tracking-tighter">
+            Your Chats
+          </h1>
+        ) : null}
         <nav className="flex flex-1 flex-col">
           <ul role="list" className="flex flex-1 flex-col gap-y-7">
-            <li>Chat&apos;s the user have</li>
+            <li>User chats</li>
             <li>
               <h1 className="leading-4 text-lg font-bold tracking-tighter">
                 Overview
