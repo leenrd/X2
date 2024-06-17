@@ -75,7 +75,6 @@ export async function POST(req: Request) {
       }
     );
 
-    // Add friend request to the user if all checks pass
     db.sadd(`user:${idToAdd}:incoming_friend_requests`, session.user.id);
 
     return new Response("Friend request sent", { status: 200 });

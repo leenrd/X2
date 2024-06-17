@@ -42,6 +42,7 @@ const SidebarChatList: FC<SidebarChatListProps> = ({ friends, sessionId }) => {
     };
 
     const removeFriendHandler = (friendId: string) => {
+      router.refresh();
       router.push("/feed/add");
       setActiveChats((prev) => prev.filter((friend) => friend.id !== friendId));
     };

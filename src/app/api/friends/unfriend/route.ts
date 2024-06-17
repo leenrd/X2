@@ -41,9 +41,14 @@ export async function POST(req: Request) {
 
     await Promise.all([
       pusherServer.trigger(
+        toPusherKey(`user:${friendId}:friends`),
+        "remove_friend",
+        user.id
+      ),
+      pusherServer.trigger(
         toPusherKey(`user:${session.user.id}:friends`),
         "remove_friend",
-        friend
+        friendId
       ),
       db.srem(`user:${session.user.id}:friends`, friendId),
       db.srem(`user:${friendId}:friends`, session.user.id),

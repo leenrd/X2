@@ -3,12 +3,11 @@
 import { pusherClient } from "@/lib/pusher";
 import { toPusherKey } from "@/lib/utils";
 import axios, { AxiosError } from "axios";
-import { log } from "console";
-import { X } from "lucide-react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { FC, useEffect, useState } from "react";
 import toast from "react-hot-toast";
+import Button from "./button";
 
 interface FriendRequestListProps {
   sessionId: string;
@@ -121,21 +120,21 @@ const FriendRequestList: FC<FriendRequestListProps> = ({
               </div>
             </section>
             <div className="flex gap-2.5">
-              <button
+              <Button
                 onClick={() => acceptFriend(request.senderId)}
                 aria-label="accept friend"
                 className="text-white px-3 bg-blue-600 hover:bg-blue-700 grid place-items-center rounded-sm transition hover:shadow-md"
               >
                 Accept
-              </button>
+              </Button>
 
-              <button
+              <Button
                 onClick={() => denyFriend(request.senderId)}
                 aria-label="deny friend"
-                className="w-8 h-8 bg-red-600 hover:bg-red-700 grid place-items-center rounded-sm transition hover:shadow-md"
+                className=" bg-red-600 hover:bg-red-700 grid place-items-center rounded-sm transition hover:shadow-md"
               >
-                <X className="font-semibold text-white w-3/4 h-3/4" />
-              </button>
+                Deny
+              </Button>
             </div>
           </div>
         ))
