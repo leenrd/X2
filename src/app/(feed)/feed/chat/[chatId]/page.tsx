@@ -1,5 +1,6 @@
 import ChatInput from "@/components/chat-input";
 import Messages from "@/components/messages";
+import UnFriendBtn from "@/components/ui/unFriendBtn";
 import { fetchRedis } from "@/helpers/redis";
 import { authOptions } from "@/lib/auth";
 import { messageArrayValidator } from "@/lib/validations/message";
@@ -14,6 +15,26 @@ interface PageProps {
   };
 }
 
+export async function generateMetadata({
+  params,
+}: {
+  params: { chatId: string };
+}) {
+  const session = await getServerSession(authOptions);
+  if (!session) notFound();
+  const [userId1, userId2] = params.chatId.split("--");
+  const { user } = session;
+
+  const chatPartnerId = user.id === userId1 ? userId2 : userId1;
+  const chatPartnerRaw = (await fetchRedis(
+    "get",
+    `user:${chatPartnerId}`
+  )) as string;
+  const chatPartner = JSON.parse(chatPartnerRaw) as User;
+
+  return { title: `X2 | ${chatPartner.name} chat` };
+}
+
 async function getChatMessages(chatId: string) {
   try {
     const results: string[] = await fetchRedis(
@@ -25,9 +46,7 @@ async function getChatMessages(chatId: string) {
 
     const dbMessages = results.map((message) => JSON.parse(message) as Message);
 
-    const reversedDbMessages = dbMessages.reverse().reverse();
-
-    const messages = messageArrayValidator.parse(reversedDbMessages);
+    const messages = messageArrayValidator.parse(dbMessages);
 
     return messages;
   } catch (error) {
@@ -79,6 +98,7 @@ const Page: FC<PageProps> = async ({ params }) => {
             <span className="text-sm text-gray-600">Active</span>
           </div>
         </div>
+        <UnFriendBtn partnerId={chatPartnerId} chatId={chatId} />
       </header>
       <Messages
         initialMessages={initialMessages}

@@ -27,7 +27,7 @@ const Messages: FC<MessagesProps> = ({
     pusherClient.subscribe(toPusherKey(`chat:${chatId}`));
 
     const messageHandler = (message: Message) => {
-      setMessages((prev) => [message, ...prev]);
+      setMessages((prev) => [...prev, message]);
     };
 
     pusherClient.bind("incoming-message", messageHandler);
@@ -51,8 +51,10 @@ const Messages: FC<MessagesProps> = ({
       <div ref={scrollDownRef}>
         {messages.map((message, index) => {
           const currentUser = message.senderId === sessionId;
-          const hasNextMessageFromSameUser =
+          const hasBeforeMessageFromSameUser =
             messages[index - 1]?.senderId === messages[index].senderId;
+          const hasNextMessageFromSameUser =
+            messages[index + 1]?.senderId === messages[index].senderId;
 
           return (
             <div
@@ -78,20 +80,22 @@ const Messages: FC<MessagesProps> = ({
                       "bg-sky-600 text-white": currentUser,
                       "bg-gray-200 text-gray-900": !currentUser,
                       "rounded-br-none":
-                        !hasNextMessageFromSameUser && currentUser,
+                        (!hasBeforeMessageFromSameUser && currentUser) ||
+                        (hasNextMessageFromSameUser && currentUser),
                       "rounded-tr-none":
-                        hasNextMessageFromSameUser && currentUser,
+                        hasBeforeMessageFromSameUser && currentUser,
                       "rounded-bl-none":
-                        !hasNextMessageFromSameUser && !currentUser,
+                        (!hasBeforeMessageFromSameUser && !currentUser) ||
+                        (hasNextMessageFromSameUser && !currentUser),
                       "rounded-tl-none":
-                        hasNextMessageFromSameUser && !currentUser,
+                        hasBeforeMessageFromSameUser && !currentUser,
                     })}
                   >
                     {message.message}{" "}
                     <span
                       className={cn("ml-2 text-xs", {
-                        "text-gray-100": currentUser,
-                        "text-gray-600": !currentUser,
+                        "text-gray-200/60": currentUser,
+                        "text-gray-400/60": !currentUser,
                       })}
                     >
                       {formatTimestamp(message.timestamp)}
@@ -102,7 +106,7 @@ const Messages: FC<MessagesProps> = ({
                   className={cn("relative w-6 h-6", {
                     "order-2": currentUser,
                     "order-1": !currentUser,
-                    invisible: hasNextMessageFromSameUser,
+                    invisible: hasBeforeMessageFromSameUser,
                   })}
                 >
                   <Image

@@ -4,7 +4,7 @@ import { pusherClient } from "@/lib/pusher";
 import { toPusherKey } from "@/lib/utils";
 import { Users } from "lucide-react";
 import Link from "next/link";
-import { FC, useCallback, useEffect, useState } from "react";
+import { FC, useEffect, useState } from "react";
 
 interface FriendRequestProps {
   sessionId: string;

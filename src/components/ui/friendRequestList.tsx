@@ -27,7 +27,6 @@ const FriendRequestList: FC<FriendRequestListProps> = ({
     pusherClient.subscribe(
       toPusherKey(`user:${sessionId}:incoming_friend_requests`)
     );
-    console.log("listening to ", `user:${sessionId}:incoming_friend_requests`);
 
     const friendRequestHandler = ({
       senderId,
@@ -60,7 +59,6 @@ const FriendRequestList: FC<FriendRequestListProps> = ({
         const updatedRequests = prev.filter(
           (request) => request.senderId !== senderId
         );
-        console.log("Updated Requests:", updatedRequests);
         return updatedRequests;
       });
       toast.success("Friend request accepted!", {

@@ -27,6 +27,7 @@ const SidebarChatList: FC<SidebarChatListProps> = ({ friends, sessionId }) => {
     pusherClient.subscribe(toPusherKey(`user:${sessionId}:friends`));
 
     const newFriendHandler = (newFriend: User) => {
+      router.refresh();
       setActiveChats((prev) => [...prev, newFriend]);
     };
 
@@ -37,23 +38,17 @@ const SidebarChatList: FC<SidebarChatListProps> = ({ friends, sessionId }) => {
 
       if (!shouldNotify) return;
 
-      // should be notified
-      // toast.custom((t) => (
-      //   <UnseenChatToast
-      //     t={t}
-      //     sessionId={sessionId}
-      //     senderId={message.senderId}
-      //     senderImg={message.senderImg}
-      //     senderMessage={message.text}
-      //     senderName={message.senderName}
-      //   />
-      // ));
-
       setUnseenMessages((prev) => [...prev, message]);
+    };
+
+    const removeFriendHandler = (friendId: string) => {
+      router.push("/feed/add");
+      setActiveChats((prev) => prev.filter((friend) => friend.id !== friendId));
     };
 
     pusherClient.bind("new_message", chatHandler);
     pusherClient.bind("new_friend", newFriendHandler);
+    pusherClient.bind("remove_friend", removeFriendHandler);
 
     return () => {
       pusherClient.unsubscribe(toPusherKey(`user:${sessionId}:chats`));
@@ -61,6 +56,7 @@ const SidebarChatList: FC<SidebarChatListProps> = ({ friends, sessionId }) => {
 
       pusherClient.unbind("new_message", chatHandler);
       pusherClient.unbind("new_friend", newFriendHandler);
+      pusherClient.unbind("remove_friend", removeFriendHandler);
     };
   }, [pathname, sessionId, router]);
 

@@ -51,13 +51,13 @@ const Layout: FC<LayoutProps> = async ({ children }) => {
           <Icons.Shell className="h-8 w-auto text-black" />
         </Link>
 
-        {friends.length > 0 ? (
+        {friends.length === 0 ? (
           <h1 className="leading-4 text-lg font-bold tracking-tighter">
-            Your Chats
+            No Friends Yet
           </h1>
         ) : (
           <h1 className="leading-4 text-lg font-bold tracking-tighter">
-            No Friends Yet
+            Your Chats
           </h1>
         )}
         <nav className="flex flex-1 flex-col">
