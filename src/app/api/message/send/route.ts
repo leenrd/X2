@@ -68,9 +68,6 @@ export async function POST(req: Request) {
 
     return new Response("Message sent", { status: 200 });
   } catch (error) {
-    if (error instanceof Error) {
-      return new Response(error.message);
-    }
     return new Response("Internal server error", { status: 500 });
   }
 }
