@@ -37,15 +37,14 @@ export async function POST(req: Request) {
     ])) as [string, string];
 
     const user = JSON.parse(userRaw) as User;
-    const friend = JSON.parse(friendRaw) as User;
 
     await Promise.all([
-      await pusherServer.trigger(
+      pusherServer.trigger(
         toPusherKey(`user:${friendId}:friends`),
         "remove_friend",
         user.id
       ),
-      await pusherServer.trigger(
+      pusherServer.trigger(
         toPusherKey(`user:${session.user.id}:friends`),
         "remove_friend",
         friendId
