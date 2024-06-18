@@ -8,16 +8,16 @@ import { z } from "zod";
 
 export async function POST(req: Request) {
   try {
+    const body = await req.json();
     const UnfriendValidation = z.object({
       chatId: z.string(),
       friendId: z.string(),
     });
 
-    const body = await req.json();
     const { chatId, friendId } = UnfriendValidation.parse(body);
 
     const session = await getServerSession(authOptions);
-    if (!session) return { status: 401, body: { message: "Unauthorized" } };
+    if (!session) return new Response("Unauthorized", { status: 401 });
 
     const isFriends = await fetchRedis(
       "sismember",
@@ -55,7 +55,7 @@ export async function POST(req: Request) {
       db.del(`chat:${chatId}:messages`),
     ]);
 
-    return new Response("Unfriended", { status: 200 });
+    return new Response("OK");
   } catch (error) {
     if (error instanceof z.ZodError) {
       return new Response("Invalid Request Payload", { status: 400 });

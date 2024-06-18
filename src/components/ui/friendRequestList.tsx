@@ -8,6 +8,7 @@ import { useRouter } from "next/navigation";
 import { FC, useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import Button from "./button";
+import { Loader } from "lucide-react";
 
 interface FriendRequestListProps {
   sessionId: string;
@@ -21,6 +22,10 @@ const FriendRequestList: FC<FriendRequestListProps> = ({
   const router = useRouter();
   const [incomingFriendRequests, setIncomingFriendRequests] =
     useState<IncomingFriendRequest[]>(requests);
+  const [isLoading, setIsLoading] = useState<Record<string, boolean>>({
+    acceptLoading: false,
+    denyLoading: false,
+  });
 
   useEffect(() => {
     pusherClient.subscribe(
@@ -52,6 +57,7 @@ const FriendRequestList: FC<FriendRequestListProps> = ({
 
   const acceptFriend = async (senderId: string) => {
     try {
+      setIsLoading((prev) => ({ ...prev, acceptLoading: true }));
       await axios.post("/api/friends/accept", { id: senderId });
 
       setIncomingFriendRequests((prev) => {
@@ -69,11 +75,14 @@ const FriendRequestList: FC<FriendRequestListProps> = ({
       if (error instanceof AxiosError) {
         return new Response("Invalid request payload", { status: 422 });
       }
+    } finally {
+      setIsLoading((prev) => ({ ...prev, acceptLoading: false }));
     }
   };
 
   const denyFriend = async (senderId: string) => {
     try {
+      setIsLoading((prev) => ({ ...prev, denyLoading: true }));
       await axios.post("/api/friends/deny", { id: senderId });
 
       setIncomingFriendRequests((prev) =>
@@ -88,6 +97,8 @@ const FriendRequestList: FC<FriendRequestListProps> = ({
       if (error instanceof AxiosError) {
         return new Response("Invalid request payload", { status: 422 });
       }
+    } finally {
+      setIsLoading((prev) => ({ ...prev, denyLoading: false }));
     }
   };
 
@@ -123,16 +134,24 @@ const FriendRequestList: FC<FriendRequestListProps> = ({
               <Button
                 onClick={() => acceptFriend(request.senderId)}
                 aria-label="accept friend"
-                className="text-white px-3 bg-blue-600 hover:bg-blue-700 grid place-items-center rounded-sm transition hover:shadow-md"
+                disabled={isLoading.acceptLoading}
+                className="text-white flex gap-3 px-3 bg-blue-600 hover:bg-blue-700 place-items-center transition hover:shadow-md"
               >
+                {!isLoading.acceptLoading ? null : (
+                  <Loader className="animate-spin" size={20} />
+                )}
                 Accept
               </Button>
 
               <Button
                 onClick={() => denyFriend(request.senderId)}
                 aria-label="deny friend"
-                className=" bg-red-600 hover:bg-red-700 grid place-items-center rounded-sm transition hover:shadow-md"
+                disabled={isLoading.denyLoading}
+                className=" bg-red-600 hover:bg-red-700 flex gap-3 place-items-center transition hover:shadow-md"
               >
+                {!isLoading.denyLoading ? null : (
+                  <Loader className="animate-spin" size={20} />
+                )}
                 Deny
               </Button>
             </div>
