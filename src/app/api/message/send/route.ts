@@ -68,6 +68,6 @@ export async function POST(req: Request) {
 
     return new Response("Message sent", { status: 200 });
   } catch (error) {
-    return new Response("Internal server error", { status: 500 });
+    return new Response("Internal server error nigga", { status: 500 });
   }
 }
