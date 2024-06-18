@@ -75,7 +75,7 @@ export async function POST(req: Request) {
       }
     );
 
-    db.sadd(`user:${idToAdd}:incoming_friend_requests`, session.user.id);
+    await db.sadd(`user:${idToAdd}:incoming_friend_requests`, session.user.id);
 
     return new Response("Friend request sent", { status: 200 });
   } catch (error) {
