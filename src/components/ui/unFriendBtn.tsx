@@ -2,7 +2,7 @@
 
 import { FC, useState } from "react";
 import Button from "./button";
-import { Loader, UserRoundX, VenetianMask } from "lucide-react";
+import { AudioLines, Loader, UserRoundX } from "lucide-react";
 import axios, { AxiosError } from "axios";
 import toast from "react-hot-toast";
 import { useRouter } from "next/navigation";
@@ -44,8 +44,8 @@ const UnFriendBtn: FC<UnFriendBtnProps> = ({ partnerId, chatId }) => {
   return (
     <div className="pr-8 flex gap-1.5 items-center">
       <Button variant={"ghost"}>
-        <VenetianMask size={17} className="mr-2" />
-        <p>Stealth</p>
+        <AudioLines size={17} className="mr-2" />
+        <p>Transcript</p>
       </Button>
       <Button
         variant={"destructive"}

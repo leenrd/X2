@@ -35,7 +35,7 @@ export async function generateMetadata({
   return { title: `X2 | ${chatPartner.name} chat` };
 }
 
-async function getChatMessages(chatId: string) {
+async function getChatMessages(chatId: string, chatPartnerId: string) {
   try {
     const results: string[] = await fetchRedis(
       "zrange",
@@ -71,10 +71,18 @@ const Page: FC<PageProps> = async ({ params }) => {
     `user:${chatPartnerId}`
   )) as string;
   const partnerParsed = JSON.parse(chatPartner) as User;
-  const initialMessages = (await getChatMessages(chatId)) as Message[];
+  const initialMessages = (await getChatMessages(
+    chatId,
+    chatPartnerId
+  )) as Message[];
+
+  const lastMessageFromPartner = initialMessages
+    .slice()
+    .reverse()
+    .find((message) => message.senderId === chatPartnerId)!;
 
   return (
-    <div className="flex-1 justify-between flex flex-col h-full max-h-[calc(100vh-6rem)] ">
+    <div className="flex-1 justify-between flex flex-col h-full max-h-[100vh] ">
       <header className="flex sm:items-center justify-between py-3 border-b-2 border-gray-200">
         <div className="relative flex items-center space-x-4">
           <div className="relative">
@@ -107,7 +115,11 @@ const Page: FC<PageProps> = async ({ params }) => {
         sessionId={session.user.id}
         imgFromSession={session.user.image}
       />
-      <ChatInput chatId={chatId} chatPartner={partnerParsed} />
+      <ChatInput
+        chatId={chatId}
+        chatPartner={partnerParsed}
+        lastMessage={lastMessageFromPartner}
+      />
     </div>
   );
 };

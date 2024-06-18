@@ -9,6 +9,7 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@google/generative-ai": "^0.13.0",
     "@hookform/resolvers": "^3.6.0",
     "@next-auth/upstash-redis-adapter": "^3.0.4",
     "@radix-ui/react-slot": "^1.0.2",

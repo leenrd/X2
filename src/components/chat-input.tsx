@@ -5,16 +5,26 @@ import { FC, useRef, useState } from "react";
 import { toast } from "react-hot-toast";
 import TextareaAutosize from "react-textarea-autosize";
 import Button from "./ui/button";
+import { Sparkles } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { runGemini } from "@/lib/ai";
 
 interface ChatInputProps {
   chatPartner: User;
   chatId: string;
+  lastMessage: Message;
 }
 
-const ChatInput: FC<ChatInputProps> = ({ chatPartner, chatId }) => {
+const ChatInput: FC<ChatInputProps> = ({
+  chatPartner,
+  chatId,
+  lastMessage,
+}) => {
+  const router = useRouter();
   const textareaRef = useRef<HTMLTextAreaElement | null>(null);
   const [input, setInput] = useState<string>("");
   const [isLoading, setLoading] = useState<boolean>(false);
+  const [fromAI, setFromAI] = useState<string>("Fetching AI quick reply...");
 
   const sendMessage = async () => {
     if (!input) return;
@@ -23,12 +33,18 @@ const ChatInput: FC<ChatInputProps> = ({ chatPartner, chatId }) => {
     try {
       await axios.post("/api/message/send", { text: input, chatId });
       setInput("");
+      setFromAI(await runGemini(lastMessage.message));
       textareaRef.current?.focus();
     } catch (error) {
       toast.error("Failed to send message");
     } finally {
       setLoading(false);
+      router.refresh();
     }
+  };
+
+  const handleAI = () => {
+    setInput((prev) => (prev = fromAI));
   };
 
   return (
@@ -73,7 +89,16 @@ const ChatInput: FC<ChatInputProps> = ({ chatPartner, chatId }) => {
           </div>
         </div>
       </div>
-      chat quick reply options //
+      <Button
+        variant={"ghost"}
+        onClick={() => handleAI()}
+        className="mb-7 mt-3 py-2 flex items-center justify-start gap-4 w-full"
+      >
+        <Sparkles className="animate-pulse" size={20} />
+        <p className="truncate">
+          Click to use AI quick reply :: <strong>{fromAI}</strong>
+        </p>
+      </Button>
     </div>
   );
 };
