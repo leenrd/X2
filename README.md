@@ -1,11 +1,15 @@
 # X2
 
-real-time chat application keke
+> [!Important]
+>
+> real-time chat application keke.
 
-feat:
+features:
 
-- refactor ui
-- rooms?
-- dark/light mode
-- ai translate?
+- realtime comm
+- friends/unfriend
+- realtime notification
 - gemini integration for quick replies
+- fast realtime in-memory datastore with redis
+
+Screenshots:
