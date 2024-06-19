@@ -18,11 +18,11 @@ import {
 } from "@google/generative-ai";
 
 const apiKey =
-  process.env.GEMINI_API_KEY || "AIzaSyCD5r2LHQQo_nkFQNTFtLUDGT6YuToA3OU";
+  process.env.GEMINI_API_KEY || "AIzaSyCsWwY_pz5BEFAHW8kW6-kUVrvznC1t0iY";
 const genAI = new GoogleGenerativeAI(apiKey);
 
 const model = genAI.getGenerativeModel({
-  model: "gemini-1.5-pro",
+  model: "gemini-1.5-flash",
 });
 
 const generationConfig = {
@@ -41,9 +41,14 @@ export async function runGemini(prompt: string) {
     history: [],
   });
 
-  const result = await chatSession.sendMessage(ai.instruction + prompt);
-  // console.log(result.response.text());
-  return result.response.text();
+  try {
+    const result = await chatSession.sendMessage(ai.instruction + prompt);
+
+    // console.log(result.response.text());
+    return result.response.text();
+  } catch (error) {
+    return "API Error: Failed to generate response.";
+  }
 }
 
 export const ai: aiType = {

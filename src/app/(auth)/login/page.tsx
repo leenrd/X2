@@ -1,6 +1,7 @@
 "use client";
 
 import Button from "@/components/ui/button";
+import redirectToSite from "@/helpers/redirect";
 import { signIn } from "next-auth/react";
 import { FC, useState } from "react";
 import toast from "react-hot-toast";
@@ -62,9 +63,16 @@ const Page: FC<PageProps> = ({}) => {
             <div className="mt-6 text-center ">
               <a
                 href="https://github.com/leenrd"
-                className="text-sm text-gray-500 hover:underline "
+                className="text-sm text-gray-500"
               >
-                See my other projects at Github! 😁
+                See my other projects at{" "}
+                <span
+                  onClick={() => redirectToSite("https://github.com/leenrd/")}
+                  className="text-blue-500 hover:underline cursor-pointer"
+                >
+                  Github
+                </span>
+                ! 😁
               </a>
             </div>
           </div>
