@@ -23,10 +23,10 @@ const Page: FC<PageProps> = ({}) => {
   };
 
   return (
-    <section className="bg-white text-black">
+    <section className="bg-blue-700 text-black">
       <div className="container flex items-center justify-center min-h-screen px-6 mx-auto">
         <div className="w-full max-w-md">
-          <h1 className="mt-3 text-2xl font-semibold text-center mb-10 capitalize sm:text-3xl">
+          <h1 className="mt-3 text-2xl font-semibold text-center mb-10 capitalize sm:text-3xl text-white">
             sign In
           </h1>
 
@@ -34,7 +34,7 @@ const Page: FC<PageProps> = ({}) => {
             <Button
               variant="default"
               isLoading={isLoading}
-              className="flex items-center w-full justify-center px-6 py-3 mt-4 transition-colors duration-300 transform border rounded-lg"
+              className="flex items-center w-full justify-center px-6 py-3 mt-4 transition-colors duration-300 transform border rounded-lg bg-white text-black"
               onClick={loginWithGoogle}
             >
               {" "}
@@ -63,12 +63,12 @@ const Page: FC<PageProps> = ({}) => {
             <div className="mt-6 text-center ">
               <a
                 href="https://github.com/leenrd"
-                className="text-sm text-gray-500"
+                className="text-sm text-gray-100"
               >
                 See my other projects at{" "}
                 <span
                   onClick={() => redirectToSite("https://github.com/leenrd/")}
-                  className="text-blue-500 hover:underline cursor-pointer"
+                  className="text-white hover:underline cursor-pointer"
                 >
                   Github
                 </span>
